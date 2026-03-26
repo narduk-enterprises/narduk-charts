@@ -297,16 +297,16 @@ function formatCompactVolume(n: number) {
         />
 
         <NardukChartStack v-model:domain="sharedDomain">
-          <div class="flex flex-col gap-8">
+          <div class="flex flex-col gap-3">
             <div class="ns-terminal-panel">
-              <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Primary — NQ-style continuous (1m, demo)
+              <p class="mb-2 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-slate-600">
+                NQ1! · 1 min — primary
               </p>
               <NardukCandleChart
                 chart-title="NQ — 1 minute"
                 chart-description="Demo data. Zoom and pan; domain syncs RSI row and secondary pane."
                 :bars="candleBars"
-                :height="fullscreenChartHeight ?? 360"
+                :height="fullscreenChartHeight ?? 380"
                 class="w-full min-w-0"
                 :dark="terminalDark"
                 :zoomable="true"
@@ -318,6 +318,8 @@ function formatCompactVolume(n: number) {
                 :show-brush="true"
                 :show-session-grid="true"
                 :max-draw-bars="maxDraw"
+                bull-color="#26a69a"
+                bear-color="#ef5350"
                 v-model:domain="sharedDomain"
                 :format-time="formatTime"
                 :format-price="formatPrice"
@@ -336,9 +338,8 @@ function formatCompactVolume(n: number) {
             </div>
 
             <div class="ns-terminal-panel">
-              <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                RSI(14) — same viewport (<code class="font-mono text-[10px]">v-model:x-window</code
-                >)
+              <p class="mb-2 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-slate-600">
+                RSI(14)
               </p>
               <NardukLineChart
                 chart-title="RSI study"
@@ -347,8 +348,8 @@ function formatCompactVolume(n: number) {
                 :labels="rsiLabels"
                 :height="
                   fullscreenChartHeight
-                    ? Math.max(128, Math.min(208, Math.round(fullscreenChartHeight * 0.22)))
-                    : 176
+                    ? Math.max(128, Math.min(196, Math.round(fullscreenChartHeight * 0.2)))
+                    : 168
                 "
                 class="w-full min-w-0"
                 :dark="terminalDark"
@@ -360,8 +361,8 @@ function formatCompactVolume(n: number) {
             </div>
 
             <div class="ns-terminal-panel">
-              <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Secondary — same series, synced viewport
+              <p class="mb-2 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-slate-600">
+                Linked secondary pane
               </p>
               <NardukCandleChart
                 chart-title="Linked window (same feed)"
@@ -369,8 +370,8 @@ function formatCompactVolume(n: number) {
                 :bars="candleBars"
                 :height="
                   fullscreenChartHeight
-                    ? Math.max(244, Math.round(fullscreenChartHeight * 0.4))
-                    : 320
+                    ? Math.max(224, Math.round(fullscreenChartHeight * 0.38))
+                    : 300
                 "
                 class="w-full min-w-0"
                 :dark="terminalDark"
@@ -379,6 +380,8 @@ function formatCompactVolume(n: number) {
                 :show-brush="true"
                 :show-session-grid="true"
                 :max-draw-bars="maxDraw"
+                bull-color="#26a69a"
+                bear-color="#ef5350"
                 v-model:domain="sharedDomain"
                 :format-time="formatTime"
                 :format-price="formatPrice"
