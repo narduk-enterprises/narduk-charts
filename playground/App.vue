@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue'
-/** Built tokens + rules (run `npm run build` so PNG/SVG export embeds valid CSS). */
-import chartStylesRaw from '../dist/narduk-charts.css?raw'
+/** Source tokens + rules so the site can build from a fresh clone. */
+import chartStylesRaw from '../src/styles/chart.css?raw'
 import {
   NardukLineChart,
   NardukBarChart,

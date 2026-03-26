@@ -1100,6 +1100,14 @@ const zoomAriaHint = computed(() => zoomKeyboardHint(props.zoomable))
       </defs>
 
       <g :clip-path="plotClipUrl">
+      <rect
+        class="narduk-plot-surface narduk-plot-surface--line"
+        :x="padding.left"
+        :y="padding.top"
+        :width="plotWidth"
+        :height="plotHeight"
+        rx="12"
+      />
       <!-- Y bands (behind grid) -->
       <g
         v-if="primaryBands.length"
