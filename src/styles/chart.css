@@ -212,9 +212,14 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 4px 12px oklch(30% 0.03 264 / 0.1));
+    filter: drop-shadow(0 2px 4px oklch(30% 0.02 264 / 0.06));
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .narduk-line-path {
+      filter: none;
+    }
+  }
 
   .narduk-line-point {
     stroke: var(--color-chart-surface);
