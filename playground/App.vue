@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue'
-/** Source tokens + rules so the site can build from a fresh clone. */
-import chartStylesRaw from '../src/styles/chart.css?raw'
+/**
+ * Import processed CSS (Tailwind directives expanded by Vite) so the string
+ * injected into exported SVGs is browser-valid CSS without any @apply/@layer.
+ */
+import chartStylesRaw from '../src/styles/chart.css?inline'
 import {
   NardukLineChart,
   NardukBarChart,
