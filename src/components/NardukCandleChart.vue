@@ -1426,24 +1426,24 @@ defineExpose({
           </clipPath>
         </defs>
 
+        <rect
+          class="narduk-plot-surface narduk-plot-surface--price"
+          :x="padding.left"
+          :y="padding.top"
+          :width="plotWidth"
+          :height="priceInnerHeight"
+          rx="12"
+        />
+        <rect
+          v-if="showVolumePane"
+          class="narduk-plot-surface narduk-plot-surface--volume"
+          :x="padding.left"
+          :y="volumeTop"
+          :width="plotWidth"
+          :height="volumeInnerHeight"
+          rx="10"
+        />
         <g :clip-path="plotClipUrl">
-          <rect
-            class="narduk-plot-surface narduk-plot-surface--price"
-            :x="padding.left"
-            :y="padding.top"
-            :width="plotWidth"
-            :height="priceInnerHeight"
-            rx="12"
-          />
-          <rect
-            v-if="showVolumePane"
-            class="narduk-plot-surface narduk-plot-surface--volume"
-            :x="padding.left"
-            :y="volumeTop"
-            :width="plotWidth"
-            :height="volumeInnerHeight"
-            rx="10"
-          />
           <g
             v-if="showGrid"
             class="narduk-grid"
@@ -1580,7 +1580,6 @@ defineExpose({
               :height="vb.h"
               :rx="Math.min(2, vb.w / 3)"
               :fill="vb.fill"
-              opacity="0.72"
             />
           </g>
 

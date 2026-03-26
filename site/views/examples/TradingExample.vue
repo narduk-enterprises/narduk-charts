@@ -278,40 +278,40 @@ function formatCompactVolume(n: number) {
         <NardukChartStack v-model:domain="sharedDomain">
           <div class="flex flex-col gap-8">
             <div class="ns-terminal-panel">
-            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Primary — NQ-style continuous (1m, demo)
-            </p>
-            <NardukCandleChart
-              chart-title="NQ — 1 minute"
-              chart-description="Demo data. Zoom and pan; domain syncs RSI row and secondary pane."
-              :bars="candleBars"
-              :height="fullscreenChartHeight ?? 360"
-              class="w-full min-w-0"
-              :dark="terminalDark"
-              :zoomable="true"
-              :y-scale="useLogScale ? 'log' : 'linear'"
-              :highlight-forming-bar="true"
-              :drawings="drawings"
-              :drawing-tool="drawingTool"
-              :show-volume="true"
-              :show-brush="true"
-              :show-session-grid="true"
-              :max-draw-bars="maxDraw"
-              v-model:domain="sharedDomain"
-              :format-time="formatTime"
-              :format-price="formatPrice"
-              @update:drawings="drawings = $event"
-            >
-              <template #overlay="{ metrics }">
-                <TradingChartOverlay
-                  :metrics="metrics"
-                  :vwap="sessionVwap"
-                  :session-open="sessionOpen"
-                  :opening-range-high="openingRange.high"
-                  :opening-range-low="openingRange.low"
-                />
-              </template>
-            </NardukCandleChart>
+              <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Primary — NQ-style continuous (1m, demo)
+              </p>
+              <NardukCandleChart
+                chart-title="NQ — 1 minute"
+                chart-description="Demo data. Zoom and pan; domain syncs RSI row and secondary pane."
+                :bars="candleBars"
+                :height="fullscreenChartHeight ?? 360"
+                class="w-full min-w-0"
+                :dark="terminalDark"
+                :zoomable="true"
+                :y-scale="useLogScale ? 'log' : 'linear'"
+                :highlight-forming-bar="true"
+                :drawings="drawings"
+                :drawing-tool="drawingTool"
+                :show-volume="true"
+                :show-brush="true"
+                :show-session-grid="true"
+                :max-draw-bars="maxDraw"
+                v-model:domain="sharedDomain"
+                :format-time="formatTime"
+                :format-price="formatPrice"
+                @update:drawings="drawings = $event"
+              >
+                <template #overlay="{ metrics }">
+                  <TradingChartOverlay
+                    :metrics="metrics"
+                    :vwap="sessionVwap"
+                    :session-open="sessionOpen"
+                    :opening-range-high="openingRange.high"
+                    :opening-range-low="openingRange.low"
+                  />
+                </template>
+              </NardukCandleChart>
             </div>
 
             <div class="ns-terminal-panel">

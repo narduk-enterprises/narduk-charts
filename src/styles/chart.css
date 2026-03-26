@@ -218,6 +218,7 @@
   @media (prefers-reduced-motion: reduce) {
     .narduk-line-path {
       filter: none;
+      transition: none;
     }
   }
 
