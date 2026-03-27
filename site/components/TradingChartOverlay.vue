@@ -46,24 +46,28 @@ const overlayLines = computed(() => [
 
 <template>
   <g class="td-overlay" pointer-events="none">
-    <rect
+    <g
       v-if="openingBand.height > 0"
-      class="td-overlay__opening-band"
-      :x="plotLeft"
-      :y="openingBand.y"
-      :width="plotWidth"
-      :height="openingBand.height"
-      rx="12"
-    />
-    <text
-      v-if="openingBand.height > 0"
-      class="td-overlay__caption"
-      :x="plotLeft + 10"
-      :y="Math.max(props.metrics.padding.top + 16, openingBand.y + 13)"
-      aria-hidden="true"
+      role="img"
+      aria-label="Opening range"
     >
-      OR
-    </text>
+      <rect
+        class="td-overlay__opening-band"
+        :x="plotLeft"
+        :y="openingBand.y"
+        :width="plotWidth"
+        :height="openingBand.height"
+        rx="12"
+      />
+      <text
+        class="td-overlay__caption"
+        :x="plotLeft + 10"
+        :y="Math.max(props.metrics.padding.top + 16, openingBand.y + 13)"
+        aria-hidden="true"
+      >
+        OR
+      </text>
+    </g>
 
     <g
       v-for="line in overlayLines"

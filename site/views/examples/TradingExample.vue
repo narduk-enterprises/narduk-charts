@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import {
   NardukCandleChart,
   NardukChartStack,
@@ -10,33 +10,33 @@ import {
   rsi,
   recommendMaxDrawBars,
   suggestCandleRenderStrategy,
-} from 'narduk-charts';
-import type { CandleBar, CandleDrawing, CandleTimeDomain, ChartSeries } from 'narduk-charts';
-import ExamplePage from '../../components/ExamplePage.vue';
-import TradingDemoToolbar from '../../components/TradingDemoToolbar.vue';
-import TradingChartOverlay from '../../components/TradingChartOverlay.vue';
-import { createSeededRandom, hasUiAuditFlag } from '../../utils/demoMode';
+} from 'narduk-charts'
+import type { CandleBar, CandleDrawing, CandleTimeDomain, ChartSeries } from 'narduk-charts'
+import ExamplePage from '../../components/ExamplePage.vue'
+import TradingDemoToolbar from '../../components/TradingDemoToolbar.vue'
+import TradingChartOverlay from '../../components/TradingChartOverlay.vue'
+import { createSeededRandom, hasUiAuditFlag } from '../../utils/demoMode'
 
-const uiAuditMode = hasUiAuditFlag();
+const uiAuditMode = hasUiAuditFlag()
 
 /** Futures-style random walk with wicks and volume spikes. */
 function seedHistory(count: number, seedPrice: number): CandleBar[] {
-  let price = seedPrice;
-  const stepMs = 60_000;
+  let price = seedPrice
+  const stepMs = 60_000
   // In audit mode use a fixed anchor date + seeded RNG for determinism.
   // In normal mode anchor to the recent past so the demo always looks "current".
   const t0 = uiAuditMode
     ? Date.UTC(2026, 0, 15, 14, 0, 0)
-    : Date.now() - count * stepMs;
-  const rand = uiAuditMode ? createSeededRandom(17_031) : Math.random;
-  const out: CandleBar[] = [];
+    : Date.now() - count * stepMs
+  const rand = uiAuditMode ? createSeededRandom(17_031) : Math.random
+  const out: CandleBar[] = []
   for (let i = 0; i < count; i++) {
-    const o = price;
-    const drift = (rand() - 0.49) * 14;
-    const c = Math.max(0.01, o + drift);
-    const h = Math.max(o, c) + rand() * 10;
-    const l = Math.min(o, c) - rand() * 10;
-    const v = 800 + rand() * 9000 + (Math.abs(c - o) > 6 ? 4000 : 0);
+    const o = price
+    const drift = (rand() - 0.49) * 14
+    const c = Math.max(0.01, o + drift)
+    const h = Math.max(o, c) + rand() * 10
+    const l = Math.min(o, c) - rand() * 10
+    const v = 800 + rand() * 9000 + (Math.abs(c - o) > 6 ? 4000 : 0)
     out.push({
       t: t0 + i * stepMs,
       o,
@@ -44,44 +44,44 @@ function seedHistory(count: number, seedPrice: number): CandleBar[] {
       l,
       c,
       v: Math.round(v),
-    });
-    price = c;
+    })
+    price = c
   }
-  return out;
+  return out
 }
 
-const STREAM_CAP = 420;
-const { bars: candleBars, pushBar } = useCandleStream(STREAM_CAP, seedHistory(320, 21_180));
+const STREAM_CAP = 420
+const { bars: candleBars, pushBar } = useCandleStream(STREAM_CAP, seedHistory(320, 21_180))
 
-const sharedDomain = ref<CandleTimeDomain | null>(null);
-const terminalDark = ref(true);
-const useLogScale = ref(false);
-const drawings = ref<CandleDrawing[]>([]);
-const drawMode = ref<'off' | 'trend' | 'horizontal'>('off');
+const sharedDomain = ref<CandleTimeDomain | null>(null)
+const terminalDark = ref(true)
+const useLogScale = ref(false)
+const drawings = ref<CandleDrawing[]>([])
+const drawMode = ref<'off' | 'trend' | 'horizontal'>('off')
 
-const drawingTool = computed(() => (drawMode.value === 'off' ? null : drawMode.value));
+const drawingTool = computed(() => (drawMode.value === 'off' ? null : drawMode.value))
 
-const maxDraw = recommendMaxDrawBars({ plotWidthPx: 720 });
-const renderHint = suggestCandleRenderStrategy(STREAM_CAP, maxDraw);
+const maxDraw = recommendMaxDrawBars({ plotWidthPx: 720 })
+const renderHint = suggestCandleRenderStrategy(STREAM_CAP, maxDraw)
 
 const lineXWindow = computed({
   get() {
-    if (!sharedDomain.value || candleBars.value.length < 2) return undefined;
+    if (!sharedDomain.value || candleBars.value.length < 2) return undefined
     return {
       start: candleIndexAtTime(candleBars.value, sharedDomain.value.start),
       end: candleIndexAtTime(candleBars.value, sharedDomain.value.end),
-    };
+    }
   },
   set(w: { start: number; end: number } | undefined) {
-    if (!w || candleBars.value.length < 2) return;
+    if (!w || candleBars.value.length < 2) return
     sharedDomain.value = {
       start: candleTimeAtIndex(candleBars.value, w.start),
       end: candleTimeAtIndex(candleBars.value, w.end),
-    };
+    }
   },
-});
+})
 
-const rsiLabels = computed(() => candleBars.value.map((b) => formatShortTime(b.t)));
+const rsiLabels = computed(() => candleBars.value.map((b) => formatShortTime(b.t)))
 
 const rsiSeries = computed<ChartSeries[]>(() => [
   {
@@ -91,143 +91,143 @@ const rsiSeries = computed<ChartSeries[]>(() => [
       14
     ),
   },
-]);
+])
 
-const latestBar = computed(() => candleBars.value[candleBars.value.length - 1] ?? null);
-const firstBar = computed(() => candleBars.value[0] ?? null);
+const latestBar = computed(() => candleBars.value[candleBars.value.length - 1] ?? null)
+const firstBar = computed(() => candleBars.value[0] ?? null)
 
 const sessionChange = computed(() => {
-  const first = firstBar.value;
-  const latest = latestBar.value;
-  if (!first || !latest) return 0;
-  return latest.c - first.o;
-});
+  const first = firstBar.value
+  const latest = latestBar.value
+  if (!first || !latest) return 0
+  return latest.c - first.o
+})
 
 const sessionChangePct = computed(() => {
-  const first = firstBar.value;
-  if (!first || first.o === 0) return 0;
-  return (sessionChange.value / first.o) * 100;
-});
+  const first = firstBar.value
+  if (!first || first.o === 0) return 0
+  return (sessionChange.value / first.o) * 100
+})
 
 const sessionChangeTone = computed<'up' | 'down' | 'flat'>(() => {
-  if (sessionChange.value > 0.01) return 'up';
-  if (sessionChange.value < -0.01) return 'down';
-  return 'flat';
-});
+  if (sessionChange.value > 0.01) return 'up'
+  if (sessionChange.value < -0.01) return 'down'
+  return 'flat'
+})
 
-const sessionOpen = computed(() => firstBar.value?.o ?? 0);
+const sessionOpen = computed(() => firstBar.value?.o ?? 0)
 
 const sessionRange = computed(() => {
-  if (candleBars.value.length === 0) return { high: 0, low: 0 };
-  let high = Number.NEGATIVE_INFINITY;
-  let low = Number.POSITIVE_INFINITY;
+  if (candleBars.value.length === 0) return { high: 0, low: 0 }
+  let high = Number.NEGATIVE_INFINITY
+  let low = Number.POSITIVE_INFINITY
   for (const bar of candleBars.value) {
-    high = Math.max(high, bar.h);
-    low = Math.min(low, bar.l);
+    high = Math.max(high, bar.h)
+    low = Math.min(low, bar.l)
   }
-  return { high, low };
-});
+  return { high, low }
+})
 
 const openingRange = computed(() => {
-  const sample = candleBars.value.slice(0, Math.min(15, candleBars.value.length));
-  if (sample.length === 0) return { high: 0, low: 0 };
-  let high = Number.NEGATIVE_INFINITY;
-  let low = Number.POSITIVE_INFINITY;
+  const sample = candleBars.value.slice(0, Math.min(15, candleBars.value.length))
+  if (sample.length === 0) return { high: 0, low: 0 }
+  let high = Number.NEGATIVE_INFINITY
+  let low = Number.POSITIVE_INFINITY
   for (const bar of sample) {
-    high = Math.max(high, bar.h);
-    low = Math.min(low, bar.l);
+    high = Math.max(high, bar.h)
+    low = Math.min(low, bar.l)
   }
-  return { high, low };
-});
+  return { high, low }
+})
 
 const averageVolume = computed(() => {
-  let total = 0;
-  let count = 0;
+  let total = 0
+  let count = 0
   for (const bar of candleBars.value) {
-    if (bar.v == null) continue;
-    total += bar.v;
-    count += 1;
+    if (bar.v == null) continue
+    total += bar.v
+    count += 1
   }
-  return count > 0 ? total / count : 0;
-});
+  return count > 0 ? total / count : 0
+})
 
 const sessionVwap = computed(() => {
-  let weighted = 0;
-  let totalVolume = 0;
+  let weighted = 0
+  let totalVolume = 0
   for (const bar of candleBars.value) {
-    const volume = Math.max(1, bar.v ?? 0);
-    const typicalPrice = (bar.h + bar.l + bar.c) / 3;
-    weighted += typicalPrice * volume;
-    totalVolume += volume;
+    const volume = Math.max(1, bar.v ?? 0)
+    const typicalPrice = (bar.h + bar.l + bar.c) / 3
+    weighted += typicalPrice * volume
+    totalVolume += volume
   }
-  if (totalVolume === 0) return latestBar.value?.c ?? 0;
-  return weighted / totalVolume;
-});
+  if (totalVolume === 0) return latestBar.value?.c ?? 0
+  return weighted / totalVolume
+})
 
-let liveTimer: ReturnType<typeof setInterval> | null = null;
-const liveRandom = createSeededRandom(44_219);
+let liveTimer: ReturnType<typeof setInterval> | null = null
+const liveRandom = createSeededRandom(44_219)
 
 function pushNextBar() {
-  const b = candleBars.value;
-  const last = b[b.length - 1];
-  if (!last) return;
-  const stepMs = 60_000;
-  const t = last.t + stepMs;
-  const o = last.c;
-  const drift = (liveRandom() - 0.5) * 8;
-  const c = Math.max(0.01, o + drift);
-  const h = Math.max(o, c) + liveRandom() * 6;
-  const l = Math.min(o, c) - liveRandom() * 6;
-  const v = Math.round(1200 + liveRandom() * 7000);
-  pushBar({ t, o, h, l, c, v });
+  const b = candleBars.value
+  const last = b[b.length - 1]
+  if (!last) return
+  const stepMs = 60_000
+  const t = last.t + stepMs
+  const o = last.c
+  const drift = (liveRandom() - 0.5) * 8
+  const c = Math.max(0.01, o + drift)
+  const h = Math.max(o, c) + liveRandom() * 6
+  const l = Math.min(o, c) - liveRandom() * 6
+  const v = Math.round(1200 + liveRandom() * 7000)
+  pushBar({ t, o, h, l, c, v })
 }
 
 onMounted(() => {
-  if (uiAuditMode) return;
-  liveTimer = setInterval(pushNextBar, 1800);
-});
+  if (uiAuditMode) return
+  liveTimer = setInterval(pushNextBar, 1800)
+})
 
 onUnmounted(() => {
-  if (liveTimer) clearInterval(liveTimer);
-});
+  if (liveTimer) clearInterval(liveTimer)
+})
 
 function formatTime(ms: number) {
-  const d = new Date(ms);
+  const d = new Date(ms)
   return d.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
     month: 'short',
     day: 'numeric',
-  });
+  })
 }
 
 function formatShortTime(ms: number) {
-  const d = new Date(ms);
-  return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  const d = new Date(ms)
+  return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 }
 
 function formatPrice(n: number) {
   return n.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  });
+  })
 }
 
 function formatSignedPrice(n: number) {
-  const sign = n > 0 ? '+' : '';
-  return `${sign}${formatPrice(n)}`;
+  const sign = n > 0 ? '+' : ''
+  return `${sign}${formatPrice(n)}`
 }
 
 function formatSignedPercent(n: number) {
-  const sign = n > 0 ? '+' : '';
-  return `${sign}${n.toFixed(2)}%`;
+  const sign = n > 0 ? '+' : ''
+  return `${sign}${n.toFixed(2)}%`
 }
 
 function formatCompactVolume(n: number) {
   return new Intl.NumberFormat(undefined, {
     notation: 'compact',
     maximumFractionDigits: 1,
-  }).format(n);
+  }).format(n)
 }
 </script>
 

@@ -30,6 +30,13 @@ export function prepareUiQualityRoot(rootDir) {
     );
   }
 
+  const relativeToCwd = path.relative(cwd, resolvedRoot);
+  if (relativeToCwd.startsWith('..') || path.isAbsolute(relativeToCwd)) {
+    throw new Error(
+      `prepareUiQualityRoot: refusing to remove directory outside current working directory: ${resolvedRoot}`
+    );
+  }
+
   rmSync(resolvedRoot, { recursive: true, force: true });
   mkdirSync(resolvedRoot, { recursive: true });
 }
