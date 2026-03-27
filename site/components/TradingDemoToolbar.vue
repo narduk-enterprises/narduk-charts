@@ -70,7 +70,7 @@ function onDrawModeChange(event: Event) {
 
       <div class="td-toolbar__quote-block">
         <p class="td-toolbar__price">{{ lastPriceText }}</p>
-        <span class="td-toolbar__change-badge" :class="changeBadgeClass" aria-label="Session change">
+        <span class="td-toolbar__change-badge" :class="changeBadgeClass">
           <span class="td-toolbar__change" :class="changeClass">{{ changeText }}</span>
           <span class="td-toolbar__change-divider" aria-hidden="true" />
           <span class="td-toolbar__change" :class="changeClass">{{ changePctText }}</span>
