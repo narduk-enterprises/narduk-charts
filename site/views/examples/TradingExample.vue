@@ -23,8 +23,12 @@ const uiAuditMode = hasUiAuditFlag();
 function seedHistory(count: number, seedPrice: number): CandleBar[] {
   let price = seedPrice;
   const stepMs = 60_000;
-  const t0 = Date.UTC(2026, 0, 15, 14, 0, 0);
-  const rand = createSeededRandom(17_031);
+  // In audit mode use a fixed anchor date + seeded RNG for determinism.
+  // In normal mode anchor to the recent past so the demo always looks "current".
+  const t0 = uiAuditMode
+    ? Date.UTC(2026, 0, 15, 14, 0, 0)
+    : Date.now() - count * stepMs;
+  const rand = uiAuditMode ? createSeededRandom(17_031) : Math.random;
   const out: CandleBar[] = [];
   for (let i = 0; i < count; i++) {
     const o = price;

@@ -10,8 +10,28 @@ export function slugify(value) {
 }
 
 export function prepareUiQualityRoot(rootDir) {
-  rmSync(rootDir, { recursive: true, force: true });
-  mkdirSync(rootDir, { recursive: true });
+  if (typeof rootDir !== 'string' || rootDir.trim() === '') {
+    throw new Error('prepareUiQualityRoot: "rootDir" must be a non-empty string');
+  }
+
+  const resolvedRoot = path.resolve(rootDir);
+  const filesystemRoot = path.parse(resolvedRoot).root;
+  const cwd = process.cwd();
+
+  if (resolvedRoot === filesystemRoot) {
+    throw new Error(
+      `prepareUiQualityRoot: refusing to remove filesystem root: ${resolvedRoot}`
+    );
+  }
+
+  if (resolvedRoot === cwd) {
+    throw new Error(
+      `prepareUiQualityRoot: refusing to remove current working directory: ${resolvedRoot}`
+    );
+  }
+
+  rmSync(resolvedRoot, { recursive: true, force: true });
+  mkdirSync(resolvedRoot, { recursive: true });
 }
 
 export function writeUiQualityManifest(rootDir, manifest) {

@@ -155,44 +155,47 @@ test.describe('site ui quality', () => {
 
   test('captures mobile layouts and records overflow metrics', async ({ browser }) => {
     const context: BrowserContext = await browser.newContext(Playwright.devices['iPhone 13']);
-    const page = await context.newPage();
-    const consoleTracker = createConsoleTracker(page, [/favicon\.ico/i]);
-    const mobileRoot = path.join(SCREENSHOT_ROOT, 'mobile');
+    try {
+      const page = await context.newPage();
+      const consoleTracker = createConsoleTracker(page, [/favicon\.ico/i]);
+      const mobileRoot = path.join(SCREENSHOT_ROOT, 'mobile');
 
-    mkdirSync(mobileRoot, { recursive: true });
+      mkdirSync(mobileRoot, { recursive: true });
 
-    await gotoAndSettle(page, '/');
-    await page.screenshot({
-      path: path.join(mobileRoot, 'marketing-home-full.png'),
-      fullPage: true,
-    });
+      await gotoAndSettle(page, '/');
+      await page.screenshot({
+        path: path.join(mobileRoot, 'marketing-home-full.png'),
+        fullPage: true,
+      });
 
-    await gotoAndSettle(page, '/examples/aapl?ui-audit=1');
-    await page.waitForSelector('.narduk-candle-chart__svg', { timeout: 20_000 });
-    await page.screenshot({
-      path: path.join(mobileRoot, 'aapl-demo-full.png'),
-      fullPage: true,
-    });
+      await gotoAndSettle(page, '/examples/aapl?ui-audit=1');
+      await page.waitForSelector('.narduk-candle-chart__svg', { timeout: 20_000 });
+      await page.screenshot({
+        path: path.join(mobileRoot, 'aapl-demo-full.png'),
+        fullPage: true,
+      });
 
-    const metrics = await page.evaluate(() => {
-      const width = document.documentElement.clientWidth;
-      const horizontalOverflow = document.documentElement.scrollWidth > width;
-      return {
-        viewportWidth: width,
-        pageHeight: document.documentElement.scrollHeight,
-        horizontalOverflow,
-      };
-    });
+      const metrics = await page.evaluate(() => {
+        const width = document.documentElement.clientWidth;
+        const horizontalOverflow = document.documentElement.scrollWidth > width;
+        return {
+          viewportWidth: width,
+          pageHeight: document.documentElement.scrollHeight,
+          horizontalOverflow,
+        };
+      });
 
-    expect(metrics.horizontalOverflow).toBe(false);
+      expect(metrics.horizontalOverflow).toBe(false);
 
-    writeFileSync(
-      path.join(mobileRoot, 'metrics.json'),
-      `${JSON.stringify(metrics, null, 2)}\n`,
-      'utf8'
-    );
+      writeFileSync(
+        path.join(mobileRoot, 'metrics.json'),
+        `${JSON.stringify(metrics, null, 2)}\n`,
+        'utf8'
+      );
 
-    await consoleTracker.expectClean();
-    await context.close();
+      await consoleTracker.expectClean();
+    } finally {
+      await context.close();
+    }
   });
 });

@@ -60,8 +60,7 @@ const overlayLines = computed(() => [
       class="td-overlay__caption"
       :x="plotLeft + 10"
       :y="Math.max(props.metrics.padding.top + 16, openingBand.y + 13)"
-      role="img"
-      :aria-label="'Opening range'"
+      aria-hidden="true"
     >
       OR
     </text>

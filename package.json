@@ -52,9 +52,9 @@
     "test:watch": "vitest",
     "story:dev": "histoire dev",
     "story:build": "histoire build",
-    "test:e2e": "playwright test --project=chromium",
-    "test:e2e:update": "playwright test --project=chromium --update-snapshots",
-    "test:e2e:ui": "playwright test --project=ui-quality",
+    "test:e2e": "PLAYWRIGHT_TARGET=components playwright test --project=chromium",
+    "test:e2e:update": "PLAYWRIGHT_TARGET=components playwright test --project=chromium --update-snapshots",
+    "test:e2e:ui": "PLAYWRIGHT_TARGET=site playwright test --project=ui-quality",
     "test:e2e:ui:analyze": "node tools/playwright/analyze-ui-quality.mjs output/playwright/ui-quality",
     "size": "size-limit",
     "prepublishOnly": "npm run build"

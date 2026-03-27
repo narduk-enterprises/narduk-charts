@@ -64,10 +64,8 @@ for (const file of screenshots) {
   const fileSizeBytes = statSync(file).size;
   const mean = average(stats.channels.map((channel) => channel.mean));
   const stdev = average(stats.channels.map((channel) => channel.stdev));
-  const isFullPage =
-    relativePath.includes('page-full') ||
-    relativePath.includes('full-page') ||
-    relativePath.includes('full.png');
+  const fileName = path.basename(relativePath);
+  const isFullPage = fileName === 'page-full.png' || fileName === 'full-page.png';
 
   if (isFullPage) {
     fullPageCount += 1;
@@ -100,15 +98,35 @@ for (const file of screenshots) {
   });
 }
 
-if (manifest?.minimumScreenshotCount && screenshots.length < manifest.minimumScreenshotCount) {
+// Derive effective thresholds: prefer explicit manifest fields, then infer from captures array.
+const manifestCaptureCount = Array.isArray(manifest?.captures)
+  ? manifest.captures.reduce((total, capture) => {
+      const elementCount = Array.isArray(capture?.elementScreenshots)
+        ? capture.elementScreenshots.length
+        : 0;
+      return total + 1 + elementCount;
+    }, 0)
+  : null;
+
+const manifestFullPageCount = Array.isArray(manifest?.captures)
+  ? manifest.captures.filter((capture) => capture?.pageScreenshot).length
+  : null;
+
+const effectiveMinimumScreenshotCount =
+  manifest?.minimumScreenshotCount ?? manifestCaptureCount ?? 0;
+
+const effectiveMinimumFullPageCount =
+  manifest?.minimumFullPageCount ?? manifestFullPageCount ?? 0;
+
+if (effectiveMinimumScreenshotCount > 0 && screenshots.length < effectiveMinimumScreenshotCount) {
   failures.push(
-    `Expected at least ${manifest.minimumScreenshotCount} screenshots but found ${screenshots.length}`
+    `Expected at least ${effectiveMinimumScreenshotCount} screenshots but found ${screenshots.length}`
   );
 }
 
-if (manifest?.minimumFullPageCount && fullPageCount < manifest.minimumFullPageCount) {
+if (effectiveMinimumFullPageCount > 0 && fullPageCount < effectiveMinimumFullPageCount) {
   failures.push(
-    `Expected at least ${manifest.minimumFullPageCount} full-page screenshots but found ${fullPageCount}`
+    `Expected at least ${effectiveMinimumFullPageCount} full-page screenshots but found ${fullPageCount}`
   );
 }
 

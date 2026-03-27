@@ -114,8 +114,12 @@ const SEED_COUNT = 320;
 const offlineRandom = createSeededRandom(26_031);
 
 function seedAaplHistory(count: number, startPrice: number): CandleBar[] {
-  const t0 = Date.UTC(2026, 0, 15, 14, 0, 0);
-  const rand = createSeededRandom(88_031);
+  // In audit mode use a fixed anchor date + seeded RNG for determinism.
+  // In normal mode anchor to the recent past so the demo looks "live".
+  const t0 = uiAuditMode
+    ? Date.UTC(2026, 0, 15, 14, 0, 0)
+    : Date.now() - count * STEP_MS;
+  const rand = uiAuditMode ? createSeededRandom(88_031) : Math.random;
   let price = startPrice;
   const out: CandleBar[] = [];
   for (let i = 0; i < count; i++) {
